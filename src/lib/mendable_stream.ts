@@ -23,7 +23,7 @@ export async function MendableStream(
   data: any,
   callbacks?: MendableStreamCallbacks
 ) {
-  const url = "https://api.mendable.ai/v0/mendableChat";
+  const url = "https://api.mendable.ai/v1/mendableChat";
   const response = await fetch(url, {
     method: "POST",
     headers: {

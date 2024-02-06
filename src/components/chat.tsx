@@ -47,7 +47,7 @@ export default function Chat() {
   }, [messages]);
 
   return (
-    <Card className="w-[440px]">
+    <Card className="w-[90%] ">
       <CardHeader>
         <div className="flex flex-row items-start justify-between max-w-[100%]">
           <CardTitle className="text-lg">Chatbot</CardTitle>

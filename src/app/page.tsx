@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="flex bg-gray-50 min-h-screen items-center justify-center">
       <Popover>
-        <PopoverContent align="start" className="w-[440px] mr-4">
+        <PopoverContent align="start" className="w-full sm:w-[440px] mr-4">
           <Chat />
         </PopoverContent>
         <PopoverTrigger asChild className="fixed bottom-4 right-4">
