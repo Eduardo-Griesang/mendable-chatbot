@@ -5,9 +5,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { IngestData } from "@/lib/ingestData";
 import { MessageCircle } from "lucide-react";
 
 export default function Home() {
+  IngestData()
   return (
     <div className="flex bg-gray-50 min-h-screen items-center justify-center">
       <Popover>

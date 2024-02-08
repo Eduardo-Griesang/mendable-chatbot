@@ -2,15 +2,12 @@ import { Configuration, OpenAIApi } from "openai-edge";
 import { StreamingTextResponse } from "ai";
 import { MendableStream } from "@/lib/mendable_stream";
 import { welcomeMessage } from "@/lib/strings";
-import { IngestData } from "@/lib/ingestData";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
-
-  IngestData()
 
   // question is on the last message
   const question = messages[messages.length - 1].content;
