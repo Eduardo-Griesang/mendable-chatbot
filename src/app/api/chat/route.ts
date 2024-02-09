@@ -5,6 +5,9 @@ import { welcomeMessage } from "@/lib/strings";
 
 export const runtime = "edge";
 
+// Initialize the conversation ID to null
+let conversation_id: number | null = null;
+
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
@@ -13,21 +16,26 @@ export async function POST(req: Request) {
   const question = messages[messages.length - 1].content;
   messages.pop();
 
-  const url = "https://api.mendable.ai/v1/newConversation";
+  // Check if a conversation ID already exists
+  if (conversation_id === null) {
+    const url = "https://api.mendable.ai/v1/newConversation";
+    const data = {
+      api_key: process.env.MENDABLE_API_KEY,
+    };
 
-  const data = {
-    api_key: process.env.MENDABLE_API_KEY,
-  };
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  const r = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  const conversation_id = await r.json();
+    // Set the conversation ID if it doesn't exist
+    conversation_id = (await r.json()).conversation_id;
+  }
+  
+  console.log(conversation_id);
 
   const history = [];
   for (let i = 0; i < messages.length; i += 2) {
@@ -46,7 +54,7 @@ export async function POST(req: Request) {
     api_key: process.env.MENDABLE_API_KEY,
     question: question,
     history: history,
-    conversation_id: conversation_id.conversation_id,
+    conversation_id: conversation_id,
   });
 
   return new StreamingTextResponse(stream);

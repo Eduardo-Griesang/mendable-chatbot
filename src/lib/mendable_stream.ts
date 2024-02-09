@@ -8,7 +8,6 @@ function parseMendableStream(): (data: string) => string | void {
   return (data) => {
     const parsedData = JSON.parse(data);
     const chunk = parsedData.chunk;
-    console.log(chunk)
 
     // TODO: handle source and message_id to provide sources to the users
     // More info here: https://docs.mendable.ai/mendable-api/chat
