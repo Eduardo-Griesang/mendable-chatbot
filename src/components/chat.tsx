@@ -18,6 +18,7 @@ import Bubble from "./chat/bubble";
 import { welcomeMessage } from "@/lib/strings";
 import { useToast } from "@/components/ui/use-toast";
 import { Share } from "lucide-react";
+import { ratingSystem } from "@/app/api/chat/route";
 
 export default function Chat() {
   const { toast } = useToast();
@@ -45,6 +46,11 @@ export default function Chat() {
       });
     }
   }, [messages]);
+
+  function handleHelpful(rate:number) {
+    console.log("rate")
+    ratingSystem(rate)
+  }
 
   return (
     <Card className="w-[90%] ">
@@ -91,6 +97,14 @@ export default function Chat() {
           {messages.map((message) => (
             <Bubble key={message.id} message={message} />
           ))}
+          <div className="flex gap-5">
+            <span className="cursor-pointer" onClick={() => handleHelpful(1)}>
+              Helpful
+            </span>
+            <span className="cursor-pointer" onClick={() => handleHelpful(0)}>
+              Not Helpful
+            </span>
+          </div>
         </ScrollArea>
       </CardContent>
       <CardFooter>

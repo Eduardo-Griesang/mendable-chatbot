@@ -8,34 +8,36 @@ export const runtime = "edge";
 // Initialize the conversation ID to null
 let conversation_id: number | null = null;
 
+export async function getConversationId() {
+  if (conversation_id === null) {
+      const url = "https://api.mendable.ai/v1/newConversation";
+      const data = {
+          api_key: process.env.MENDABLE_API_KEY,
+      };
+
+      const response = await fetch(url, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+      });
+
+      conversation_id = (await response.json()).conversation_id;
+  }
+
+  return conversation_id;
+}
+
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
+  const conversationId = await getConversationId();
+  console.log(conversationId)
 
   // question is on the last message
   const question = messages[messages.length - 1].content;
   messages.pop();
-
-  // Check if a conversation ID already exists
-  if (conversation_id === null) {
-    const url = "https://api.mendable.ai/v1/newConversation";
-    const data = {
-      api_key: process.env.MENDABLE_API_KEY,
-    };
-
-    const r = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    // Set the conversation ID if it doesn't exist
-    conversation_id = (await r.json()).conversation_id;
-  }
-  
-  console.log(conversation_id);
 
   const history = [];
   for (let i = 0; i < messages.length; i += 2) {
@@ -54,8 +56,56 @@ export async function POST(req: Request) {
     api_key: process.env.MENDABLE_API_KEY,
     question: question,
     history: history,
-    conversation_id: conversation_id,
+    conversation_id: conversationId,
   });
 
   return new StreamingTextResponse(stream);
+}
+
+export async function ratingSystem(rating:number) {
+  const conversationId = await getConversationId();
+  const rateUrl = "https://api.mendable.ai/v1/rateMessage";
+  const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId"
+  console.log(conversationId)
+
+  if (conversation_id !== null) {
+    console.log(conversationId)
+    const MessageData = {
+      api_key: process.env.MENDABLE_API_KEY,
+      conversation_id: conversationId
+    };
+  
+    const message = await fetch(messageUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(MessageData),
+      })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+    
+    console.log(message)
+    const RateData = {
+      api_key: process.env.MENDABLE_API_KEY,
+      message_id: 123,
+      rating_value: rating
+    };
+    
+    fetch(rateUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(RateData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+  } else {
+    console.error("Conversation ID is null.");
+}
+
+  
 }
