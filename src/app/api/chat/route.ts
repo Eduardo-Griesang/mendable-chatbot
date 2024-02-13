@@ -9,25 +9,37 @@ export const runtime = "edge";
 let conversation_id: number | null = null;
 
 export async function getConversationId() {
-  if (conversation_id === null) {
-      const url = "https://api.mendable.ai/v1/newConversation";
-      const data = {
-          api_key: process.env.MENDABLE_API_KEY,
-      };
+  try {
+      if (conversation_id === null) {
+          const url = "https://api.mendable.ai/v1/newConversation";
+          const data = {
+              api_key: process.env.MENDABLE_API_KEY,
+          };
 
-      const response = await fetch(url, {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-      });
+          const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+          });
 
-      conversation_id = (await response.json()).conversation_id;
+          if (!response.ok) {
+              console.error(`Error creating conversation: ${response.statusText}`);
+              throw new Error(`Failed to create conversation. Status: ${response.status}`);
+          }
+
+          const responseData = await response.json();
+          conversation_id = responseData.conversation_id;
+      }
+
+      return conversation_id;
+  } catch (error) {
+      console.error("Error in getConversationId:", error);
+      throw error; // Rethrow the error to handle it at a higher level
   }
-
-  return conversation_id;
 }
+
 
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
@@ -63,9 +75,10 @@ export async function POST(req: Request) {
 }
 
 export async function ratingSystem(rating:number) {
-  const conversationId = await getConversationId();
   const rateUrl = "https://api.mendable.ai/v1/rateMessage";
   const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId"
+  
+  const conversationId = await getConversationId();
   console.log(conversationId)
 
   if (conversation_id !== null) {
@@ -89,7 +102,7 @@ export async function ratingSystem(rating:number) {
     console.log(message)
     const RateData = {
       api_key: process.env.MENDABLE_API_KEY,
-      message_id: 123,
+      message_id: message[0].message_id,
       rating_value: rating
     };
     
