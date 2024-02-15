@@ -35,7 +35,12 @@ export function createConversationManager() {
         }
     }
 
+    function returnConversationId(){
+        return conversationId
+    }
+
     return {
         getConversationId,
+        returnConversationId
     };
 }

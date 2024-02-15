@@ -48,6 +48,7 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
   const conversationId = await conversationManager.getConversationId();
+  console.log(conversationId)
 
   // question is on the last message
   const question = messages[messages.length - 1].content;
@@ -80,7 +81,7 @@ export async function ratingSystem(rating: number) {
   const rateUrl = "https://api.mendable.ai/v1/rateMessage";
   const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId";
 
-  const conversationId = await conversationManager.getConversationId();
+  const conversationId = await conversationManager.returnConversationId();
   console.log(conversationId);
 
   if (conversationId !== null) {
