@@ -81,7 +81,7 @@ export async function ratingSystem(rating: number) {
   const rateUrl = "https://api.mendable.ai/v1/rateMessage";
   const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId";
 
-  const conversationId = await conversationManager.returnConversationId();
+  const conversationId = conversationManager.returnConversationId();
   console.log(conversationId);
 
   if (conversationId !== null) {
