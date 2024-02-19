@@ -97,11 +97,11 @@ export default function Chat() {
           {messages.map((message) => (
             <Bubble key={message.id} message={message} />
           ))}
-          <div className="flex gap-5">
-            <span className="cursor-pointer" onClick={() => handleHelpful(1)}>
+          <div className="flex gap-5 text-sm ml-10">
+            <span className="cursor-pointer bg-gray-100 hover:bg-gray-200 transition duration-100 p-1 text-gray-700 rounded-sm" onClick={() => handleHelpful(1)}>
               Helpful
             </span>
-            <span className="cursor-pointer" onClick={() => handleHelpful(0)}>
+            <span className="cursor-pointer bg-gray-100 hover:bg-gray-200 transition duration-100 p-1 text-gray-700 rounded-sm" onClick={() => handleHelpful(0)}>
               Not Helpful
             </span>
           </div>
