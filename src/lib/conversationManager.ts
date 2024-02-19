@@ -36,6 +36,7 @@ export function createConversationManager() {
     }
 
     function returnConversationId(){
+        console.log(conversationId)
         return conversationId
     }
 

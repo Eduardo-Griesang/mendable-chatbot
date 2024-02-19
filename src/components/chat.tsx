@@ -48,7 +48,6 @@ export default function Chat() {
   }, [messages]);
 
   function handleHelpful(rate:number) {
-    console.log("rate")
     ratingSystem(rate)
   }
 
@@ -97,7 +96,8 @@ export default function Chat() {
           {messages.map((message) => (
             <Bubble key={message.id} message={message} />
           ))}
-          {messages.length > 0 ? <div className="flex gap-5 text-sm ml-10">
+
+          {messages.length > 1 ? <div className="flex gap-5 text-sm ml-10">
             <span className="cursor-pointer bg-gray-100 hover:bg-gray-200 transition duration-100 p-1 text-gray-700 rounded-sm" onClick={() => handleHelpful(1)}>
               Helpful
             </span>

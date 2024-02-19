@@ -6,11 +6,12 @@ import { createConversationManager } from "@/lib/conversationManager";
 
 export const runtime = "edge";
 
-let conversation_id: number | null = null;
+var conversation_id: number | null = null;
 
 export async function getConversationId() {
   try {
       // Check if a conversation ID needs to be created
+      console.log(conversation_id)
       if (conversation_id === null) {
           const url = "https://api.mendable.ai/v1/newConversation";
           const data = {
@@ -42,12 +43,16 @@ export async function getConversationId() {
   }
 }
 
+function returnConversationId(){
+    console.log(conversation_id)
+    return conversation_id
+}
+
 const conversationManager = createConversationManager();
 
 export async function POST(req: Request) {
-  // Extract the `messages` from the body of the request
   const { messages } = await req.json();
-  const conversationId = await conversationManager.getConversationId();
+  const conversationId = await getConversationId();
   console.log(conversationId)
 
   // question is on the last message
@@ -81,7 +86,7 @@ export async function ratingSystem(rating: number) {
   const rateUrl = "https://api.mendable.ai/v1/rateMessage";
   const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId";
 
-  const conversationId = conversationManager.returnConversationId();
+  const conversationId = await returnConversationId();
   console.log(conversationId);
 
   if (conversationId !== null) {
