@@ -2,7 +2,6 @@ import { Configuration, OpenAIApi } from "openai-edge";
 import { StreamingTextResponse } from "ai";
 import { MendableStream } from "@/lib/mendable_stream";
 import { welcomeMessage } from "@/lib/strings";
-import { createConversationManager } from "@/lib/conversationManager";
 
 export const runtime = "edge";
 
@@ -11,7 +10,6 @@ var conversation_id: number | null = null;
 export async function getConversationId() {
     try {
       // Check if a conversation ID needs to be created
-      console.log("Getting conversation ID:", conversation_id);
       if (conversation_id === null) {
         const url = "https://api.mendable.ai/v1/newConversation";
         const data = {
@@ -36,26 +34,12 @@ export async function getConversationId() {
         conversation_id = responseData.conversation_id;
       }
   
-      console.log("Final conversation ID:", conversation_id);
       return conversation_id;
     } catch (error) {
       console.error("Error in getConversationId:", error);
       throw error; // Rethrow the error to handle it at a higher level
     }
 }
-  
-async function returnConversationId() {
-    try {
-      const id = await getConversationId();
-      console.log("Returning conversation ID:", id);
-      return id;
-    } catch (error) {
-      console.error("Error in returnConversationId:", error);
-      throw error;
-    }
-}
-
-const conversationManager = createConversationManager();
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -86,65 +70,4 @@ export async function POST(req: Request) {
   });
 
   return new StreamingTextResponse(stream);
-}
-
-export async function ratingSystem(rating: number) {
-  const rateUrl = "https://api.mendable.ai/v1/rateMessage";
-  const messageUrl = "https://api.mendable.ai/v1/messages/byConversationId";
-
-  const conversationId = await returnConversationId();
-  console.log(conversationId);
-
-  if (conversationId !== null) {
-      console.log(conversationId);
-
-      const MessageData = {
-          api_key: process.env.MENDABLE_API_KEY,
-          conversation_id: conversationId,
-      };
-
-      try {
-          const messageResponse = await fetch(messageUrl, {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify(MessageData),
-          });
-
-          if (!messageResponse.ok) {
-              console.error(`Error fetching messages: ${messageResponse.statusText}`);
-              throw new Error(`Failed to fetch messages. Status: ${messageResponse.status}`);
-          }
-
-          const messageData = await messageResponse.json();
-          console.log(messageData);
-
-          const RateData = {
-              api_key: process.env.MENDABLE_API_KEY,
-              message_id: messageData[0].message_id,
-              rating_value: rating,
-          };
-
-          const rateResponse = await fetch(rateUrl, {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify(RateData),
-          });
-
-          if (!rateResponse.ok) {
-              console.error(`Error rating message: ${rateResponse.statusText}`);
-              throw new Error(`Failed to rate message. Status: ${rateResponse.status}`);
-          }
-
-          const rateData = await rateResponse.json();
-          console.log(rateData);
-      } catch (error) {
-          console.error("Error in ratingSystem:", error);
-      }
-  } else {
-      console.error("Conversation ID is null.");
-  }
 }

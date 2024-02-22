@@ -18,7 +18,7 @@ import Bubble from "./chat/bubble";
 import { welcomeMessage } from "@/lib/strings";
 import { useToast } from "@/components/ui/use-toast";
 import { Share } from "lucide-react";
-import { ratingSystem } from "@/app/api/chat/route";
+import { ratingSystem } from "@/lib/mendable_stream";
 
 export default function Chat() {
   const { toast } = useToast();
