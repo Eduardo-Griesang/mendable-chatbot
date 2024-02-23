@@ -19,6 +19,11 @@ function parseMendableStream(): (data: string) => string | void {
         message_id = parsedData.metadata
         console.log(message_id)
       }
+      else if (chunk === "<|source|>"){
+        const source = parsedData.metadata[0].link
+        return source
+      }
+      return
     }
 
     if (chunk === "<|tool_called|>") return `<|tool_called|>$$${parsedData.metadata.name}$$${parsedData.metadata.is_action}$$`
