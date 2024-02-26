@@ -4,7 +4,6 @@ export interface MendableStreamCallbacks extends AIStreamCallbacks {
   onMessage?: (data: string) => Promise<void>;
 }
 
-var message_id: number | null = null;
 
 function parseMendableStream(): (data: string) => string | void {
   return (data) => {
